@@ -309,3 +309,33 @@ def TransformerLM(vocab_size,
                        mode,
                        ff_activation)
   return stax.logsoftmax(logits)
+
+def bottleneck(x, bottleneck_bits):
+    """Creates a bottleneck layer for the given activations."""
+    with nn.stochastic(jax.random.PRNGKey(0)):
+      return nn.tanh(
+          nn.Dense(x, features=bottleneck_bits, dtype=jnp.float32))
+
+  def logistic_compression(x, bottleneck_bits):
+    """Creates a logistic compression layer for the given activations."""
+    with nn.stochastic(jax.random.PRNGKey(0)):
+      return nn.Dense(x, features=bottleneck_bits, dtype=jnp.float32)
+
+  def compression_function(x, bottleneck_bits):
+    """Compression function for a general shape."""
+    x_shape = x.shape
+    x = nn.reshape(x, (-1, x_shape[-1]))
+    if bottleneck_bits == 0:
+      x = nn.reshape(x, x_shape)
+      return x
+    x = bottleneck(x, bottleneck_bits)
+    x = nn.reshape(x, x_shape)
+    return x
+
+  def compression_function_per_bit(x, compression_spec):
+    """Compression function for a scalar compression spec."""
+    return jnp.where(
+        x > 0,
+        logistic_compression(x, compression_spec.bits_per_feature),
+        nn.Dense(x, features=compression_spec.bits_per_feature,
+                 dtype=jnp.float32))
