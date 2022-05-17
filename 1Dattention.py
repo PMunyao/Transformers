@@ -210,16 +210,3 @@ class Attention1D:
         self.dense_layer_5 = np.load(path + '/dense_layer_5.npy')
         self.dense_layer_6 = np.load(path + '/dense_layer_6.npy')
         self.output_layer = np.load(path + '/output_layer.npy')
-
-    def load_weights_from_numpy(self, A_q, A_k, A_v, A_o, dense_layer_1, dense_layer_2, dense_layer_3, dense_layer_4, dense_layer_5, dense_layer_6, output_layer):
-        self.A_q = A_q
-        self.A_k = A_k
-        self.A_v = A_v
-        self.A_o = A_o
-        self.dense_layer_1 = dense_layer_1
-        self.dense_layer_2 = dense_layer_2
-        self.dense_layer_3 = dense_layer_3
-        self.dense_layer_4 = dense_layer_4
-        self.dense_layer_5 = dense_layer_5
-        self.dense_layer_6 = dense_layer_6
-        self.
